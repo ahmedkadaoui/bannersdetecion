@@ -14,7 +14,7 @@ import s3fs
 
 
 
-icon=Image.open(r"C:\Users\ahmed\Desktop\icon.png")
+icon=Image.open("icon.png")
 
 st.set_page_config(page_title="Web Banners Stats",layout="wide",page_icon=icon,initial_sidebar_state="collapsed")
 
@@ -69,19 +69,28 @@ def occurence_page():
 
     i1, i2, i3, i4 = st.columns(4)
     o1, o2 = st.columns(2)
-    st.sidebar.header("Additional filters")
+
+
     Start_day = i1.selectbox('select starting day ', options=df['day'].unique())
 
     End_day = i2.selectbox('select ending day', options=df['day'].unique())
+
     Start_hour = i3.selectbox('select starting hour ', options=df['hour'].unique())
     End_hour = i4.selectbox('select ending hour', options=df['hour'].unique())
-    advertiser = st.sidebar.multiselect('select advertiser', options=df['advertiser'].unique(),
-                                   default=df['advertiser'].unique())
+
     page = o1.multiselect('select banners page level', options=df['page'].unique(), default=df['page'].unique())
     type = o2.multiselect('select banners type', options=df['type'].unique(), default=df['type'].unique())
+    s1,s2 =st.columns(2)
+
+    advertiser = s1.multiselect('select advertiser', options=df['advertiser'].unique(),
+                                default=df['advertiser'].unique())
+    Editor = s2.multiselect('select editor', options=df['site'].unique(), default=df['site'].unique())
+
+    
+    NumberOfAdvertisers = st.selectbox('select number of advertisers ', options=['5', '10', '15', '20'])
 
     df_selection = df.query(
-        "page==@page & type==@type & advertiser ==@advertiser & day <= @End_day & day >= @Start_day & hour <= @End_hour & hour >= @Start_hour "
+        "page==@page & type==@type & advertiser ==@advertiser & day <= @End_day & day >= @Start_day & hour <= @End_hour & hour >= @Start_hour & site==@Editor "
     )
 
 
@@ -105,104 +114,104 @@ def occurence_page():
         dfsites.loc[i] = [key, sitesoccurence[key]]
         i += 1
 
-    NumberOfAdvertisers = st.selectbox('select number of advertisers ', options=['5','10','15','20'])
+
 
     st.markdown('#')
 
 
-
-    b = alt.Chart(dfResume.nlargest(int(NumberOfAdvertisers), 'occurence'), title="Nombre d'impressions des top "+NumberOfAdvertisers+" annonceurs").mark_bar().encode(x=alt.X("occurence", axis=alt.Axis(title="Nb d'impressions")), y=alt.Y("advertiser",sort='-x'),
-                                                                              tooltip=["advertiser", "occurence"]).properties(height=300)
-
-
+    if len(dfResume['advertiser'])>0:
+        b = alt.Chart(dfResume.nlargest(int(NumberOfAdvertisers), 'occurence'), title="Nombre d'impressions des top "+NumberOfAdvertisers+" annonceurs").mark_bar().encode(x=alt.X("occurence", axis=alt.Axis(title="Nb d'impressions")), y=alt.Y("advertiser",sort='-x'),
+                                                                                  tooltip=["advertiser", "occurence"]).properties(height=300)
 
 
 
-    p = alt.Chart(dfsites, title="Nombre d'impressions des sites").mark_arc().encode(theta=alt.Theta(field="occurence", type="quantitative"),
-    color=alt.Color(field="site", type="nominal"),
-                                                                 tooltip=["site", "occurence"])
-    f1,f2=st.columns((1,2))
-    f1.altair_chart(p, use_container_width=True)
-    f2.altair_chart(b, use_container_width=True)
-    advertisers = df_selection["advertiser"].unique()
-    response = st.text_input('insert advertiser here for a sample of ads:')
-    adsNumber=5
-    advertisername=response
 
-    if response in advertisers:
-        A1, A2 , A3 = st.columns(3)
-        B1, B2 , B3 = st.columns(3)
 
-        if adsNumber > int(dfResume.loc[dfResume['advertiser'] == advertisername]['occurence']):
+        p = alt.Chart(dfsites, title="Nombre d'impressions des sites").mark_arc().encode(theta=alt.Theta(field="occurence", type="quantitative"),
+        color=alt.Color(field="site", type="nominal"),
+                                                                         tooltip=["site", "occurence"])
+        f1,f2=st.columns((1,2))
+        f1.altair_chart(p, use_container_width=True)
+        f2.altair_chart(b, use_container_width=True)
+        advertisers = df_selection["advertiser"].unique()
+        response = st.text_input('insert advertiser here for a sample of ads:')
+        adsNumber=5
+        advertisername=response
 
-            # ads=df_selection.loc[df['advertiser']==advertisername]['adlink']
-            ads2 = fs.ls("detectedads/" + advertisername)
+        if response in advertisers:
+            A1, A2 , A3 = st.columns(3)
+            B1, B2 , B3 = st.columns(3)
 
-            w = 0
-            for ad in ads2:
+            if adsNumber > int(dfResume.loc[dfResume['advertiser'] == advertisername]['occurence']):
 
-                with fs.open(ad) as f:
+                # ads=df_selection.loc[df['advertiser']==advertisername]['adlink']
+                ads2 = fs.ls("detectedads/" + advertisername)
 
-                    f = Image.open(f)
-                    if f.size[1]>500:
+                w = 0
+                for ad in ads2:
 
-                        f=f.resize((int((f.size[0]*f.size[1])/500),500))
-                        if w == 0:
-                            A1.image(f)
-                        if w == 1:
-                            A2.image(f)
-                        if w == 2:
-                            A3.image(f)
-                        if w == 3:
-                            B1.image(f)
-                        w += 1
-                    else :
-                        if w == 0:
-                            A1.image(f)
-                        if w == 1:
-                            A2.image(f)
-                        if w == 2:
-                            A3.image(f)
-                        if w == 3:
-                            B1.image(f)
-                        w += 1
-        else:
+                    with fs.open(ad) as f:
 
-            # ads=df_selection.loc[df_selection['advertiser']==advertisername]['adlink'][:adsNumber]
-            ads2 = fs.ls("detectedads/" + advertisername)
-            ads2 = ads2[:adsNumber]
-            w = 0
-            for ad in ads2:
+                        f = Image.open(f)
+                        if f.size[1]>500:
 
-                with fs.open(ad) as f:
-                    f = Image.open(f)
-                    if f.size[1]>500:
-                        f = f.resize((int((f.size[0] * f.size[1]) / 500), 500))
-                        if w == 0:
-                            A1.image(f)
-                        if w == 1:
-                            A2.image(f)
-                        if w == 2:
-                            A3.image(f)
-                        if w == 3:
-                            B1.image(f)
+                            f=f.resize((int((f.size[0]*f.size[1])/500),500))
+                            if w == 0:
+                                A1.image(f)
+                            if w == 1:
+                                A2.image(f)
+                            if w == 2:
+                                A3.image(f)
+                            if w == 3:
+                                B1.image(f)
+                            w += 1
+                        else :
+                            if w == 0:
+                                A1.image(f)
+                            if w == 1:
+                                A2.image(f)
+                            if w == 2:
+                                A3.image(f)
+                            if w == 3:
+                                B1.image(f)
+                            w += 1
+            else:
 
-                        if w == 4:
-                            B2.image(f)
-                        w += 1
-                    else :
-                        if w == 0:
-                            A1.image(f)
-                        if w == 1:
-                            A2.image(f)
-                        if w == 2:
-                            A3.image(f)
-                        if w == 3:
-                            B1.image(f)
+                # ads=df_selection.loc[df_selection['advertiser']==advertisername]['adlink'][:adsNumber]
+                ads2 = fs.ls("detectedads/" + advertisername)
+                ads2 = ads2[:adsNumber]
+                w = 0
+                for ad in ads2:
 
-                        if w == 4:
-                            B2.image(f)
-                        w += 1
+                    with fs.open(ad) as f:
+                        f = Image.open(f)
+                        if f.size[1]>500:
+                            f = f.resize((int((f.size[0] * f.size[1]) / 500), 500))
+                            if w == 0:
+                                A1.image(f)
+                            if w == 1:
+                                A2.image(f)
+                            if w == 2:
+                                A3.image(f)
+                            if w == 3:
+                                B1.image(f)
+
+                            if w == 4:
+                                B2.image(f)
+                            w += 1
+                        else :
+                            if w == 0:
+                                A1.image(f)
+                            if w == 1:
+                                A2.image(f)
+                            if w == 2:
+                                A3.image(f)
+                            if w == 3:
+                                B1.image(f)
+
+                            if w == 4:
+                                B2.image(f)
+                            w += 1
 
 
 
