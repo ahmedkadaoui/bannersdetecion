@@ -14,13 +14,31 @@ import s3fs
 
 
 
+icon=Image.open(r"C:\Users\ahmed\Desktop\icon.png")
 
-
-
-icon=Image.open("download.png")
 st.set_page_config(page_title="Web Banners Stats",layout="wide",page_icon=icon,initial_sidebar_state="collapsed")
 
 fs = s3fs.S3FileSystem()
+
+
+
+st.markdown("""
+        <style>
+               .css-18e3th9 {
+                    padding-top: 0rem;
+                    padding-bottom: 10rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+               .css-1d391kg {
+                    padding-top: 3.5rem;
+                    padding-right: 1rem;
+                    padding-bottom: 3.5rem;
+                    padding-left: 1rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
+
 
 hide_menu_style="""
                <style>
@@ -44,8 +62,9 @@ st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 
 def occurence_page():
-    r1, r2, r3 = st.columns((1, 1, 1))
-    r2.title("Web Banners Stats")
+    r1, r2, r3 ,r4= st.columns((0.2,0.5,1, 0.25))
+    r1.image(icon)
+    r3.title("Web Banners Stats")
 
 
     i1, i2, i3, i4 = st.columns(4)
@@ -57,13 +76,14 @@ def occurence_page():
     Start_hour = i3.selectbox('select starting hour ', options=df['hour'].unique())
     End_hour = i4.selectbox('select ending hour', options=df['hour'].unique())
     advertiser = st.sidebar.multiselect('select advertiser', options=df['advertiser'].unique(),
-                                        default=df['advertiser'].unique())
+                                   default=df['advertiser'].unique())
     page = o1.multiselect('select banners page level', options=df['page'].unique(), default=df['page'].unique())
     type = o2.multiselect('select banners type', options=df['type'].unique(), default=df['type'].unique())
 
     df_selection = df.query(
         "page==@page & type==@type & advertiser ==@advertiser & day <= @End_day & day >= @Start_day & hour <= @End_hour & hour >= @Start_hour "
     )
+
 
     dfResume = pd.DataFrame(columns=['advertiser', 'occurence'])
     dfsites = pd.DataFrame(columns=['site', 'occurence'])
@@ -110,8 +130,8 @@ def occurence_page():
     advertisername=response
 
     if response in advertisers:
-        A1, A2 = st.columns(2)
-        B1, B2 = st.columns(2)
+        A1, A2 , A3 = st.columns(3)
+        B1, B2 , B3 = st.columns(3)
 
         if adsNumber > int(dfResume.loc[dfResume['advertiser'] == advertisername]['occurence']):
 
@@ -124,15 +144,28 @@ def occurence_page():
                 with fs.open(ad) as f:
 
                     f = Image.open(f)
-                    if w == 0:
-                        A1.image(f)
-                    if w == 1:
-                        A2.image(f)
-                    if w == 2:
-                        B1.image(f)
-                    if w == 3:
-                        B2.image(f)
-                    w += 1
+                    if f.size[1]>500:
+
+                        f=f.resize((int((f.size[0]*f.size[1])/500),500))
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
+                        w += 1
+                    else :
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
+                        w += 1
         else:
 
             # ads=df_selection.loc[df_selection['advertiser']==advertisername]['adlink'][:adsNumber]
@@ -143,18 +176,33 @@ def occurence_page():
 
                 with fs.open(ad) as f:
                     f = Image.open(f)
-                    if w == 0:
-                        A1.image(f)
-                    if w == 1:
-                        A2.image(f)
-                    if w == 2:
-                        B1.image(f)
-                    if w == 3:
-                        B2.image(f)
+                    if f.size[1]>500:
+                        f = f.resize((int((f.size[0] * f.size[1]) / 500), 500))
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
 
-                    if w == 4:
-                        st.image(f)
-                    w += 1
+                        if w == 4:
+                            B2.image(f)
+                        w += 1
+                    else :
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
+
+                        if w == 4:
+                            B2.image(f)
+                        w += 1
 
 
 
