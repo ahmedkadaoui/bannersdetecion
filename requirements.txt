@@ -7,7 +7,7 @@ ipython==8.3.0
 matplotlib==3.5.1
 numpy
 onnx==1.11.0
-onnxruntime==1.11.0
+onnxruntime==1.8
 opencv_python==4.5.5.64
 openvino==2022.1.0
 pafy==0.5.5
