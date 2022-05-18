@@ -75,8 +75,8 @@ def occurence_page():
 
     End_day = i2.selectbox('select ending day', options=df['day'].unique())
 
-    Start_hour = i3.selectbox('select starting hour ', options=df['hour'].unique())
-    End_hour = i4.selectbox('select ending hour', options=df['hour'].unique())
+    Start_hour = i3.selectbox('select starting hour ', options=df['hour'].unique(),index=8)
+    End_hour = i4.selectbox('select ending hour', options=df['hour'].unique(),index=18)
 
     page = o1.multiselect('select banners page level', options=df['page'].unique(), default=df['page'].unique())
     type = o2.multiselect('select banners type', options=df['type'].unique(), default=df['type'].unique())
@@ -86,6 +86,9 @@ def occurence_page():
     df_advertiser = df.query(
         "page==@page & type==@type  & day <= @End_day & day >= @Start_day & hour <= @End_hour & hour >= @Start_hour  "
     )
+
+
+
     advertiser= s1.multiselect('select advertiser', options=df_advertiser['advertiser'].unique(),
                 default=df_advertiser['advertiser'].unique())
 
