@@ -164,28 +164,17 @@ def occurence_page():
                     with fs.open(ad) as f:
 
                         f = Image.open(f)
-                        if f.size[1]>500:
 
-                            f=f.resize((int((f.size[0]*f.size[1])/500),500))
-                            if w == 0:
-                                A1.image(f)
-                            if w == 1:
-                                A2.image(f)
-                            if w == 2:
-                                A3.image(f)
-                            if w == 3:
-                                B1.image(f)
-                            w += 1
-                        else :
-                            if w == 0:
-                                A1.image(f)
-                            if w == 1:
-                                A2.image(f)
-                            if w == 2:
-                                A3.image(f)
-                            if w == 3:
-                                B1.image(f)
-                            w += 1
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
+                        w += 1
+
             else:
 
                 # ads=df_selection.loc[df_selection['advertiser']==advertisername]['adlink'][:adsNumber]
@@ -195,34 +184,20 @@ def occurence_page():
                 for ad in ads2:
 
                     with fs.open(ad) as f:
-                        f = Image.open(f)
-                        if f.size[1]>500:
-                            f = f.resize((int((f.size[0] * f.size[1]) / 500), 500))
-                            if w == 0:
-                                A1.image(f)
-                            if w == 1:
-                                A2.image(f)
-                            if w == 2:
-                                A3.image(f)
-                            if w == 3:
-                                B1.image(f)
+                        f=Image.open(f)
 
-                            if w == 4:
-                                B2.image(f)
-                            w += 1
-                        else :
-                            if w == 0:
-                                A1.image(f)
-                            if w == 1:
-                                A2.image(f)
-                            if w == 2:
-                                A3.image(f)
-                            if w == 3:
-                                B1.image(f)
+                        if w == 0:
+                            A1.image(f)
+                        if w == 1:
+                            A2.image(f)
+                        if w == 2:
+                            A3.image(f)
+                        if w == 3:
+                            B1.image(f)
 
-                            if w == 4:
-                                B2.image(f)
-                            w += 1
+                        if w == 4:
+                            B2.image(f)
+                        w += 1
 
 
 
