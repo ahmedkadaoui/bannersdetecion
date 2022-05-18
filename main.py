@@ -131,14 +131,14 @@ def occurence_page():
 
 
     if len(dfResume['advertiser'])>0:
-        b = alt.Chart(dfResume.nlargest(int(NumberOfAdvertisers), 'occurence'), title="Nombre d'impressions des top "+NumberOfAdvertisers+" annonceurs").mark_bar().encode(x=alt.X("occurence", axis=alt.Axis(title="Nb d'impressions")), y=alt.Y("advertiser",sort='-x'),
+        b = alt.Chart(dfResume.nlargest(int(NumberOfAdvertisers), 'occurence'), title="Nombre d'occurence des top "+NumberOfAdvertisers+" annonceurs").mark_bar().encode(x=alt.X("occurence", axis=alt.Axis(title="Nb d'occurence")), y=alt.Y("advertiser",sort='-x'),
                                                                                   tooltip=["advertiser", "occurence"]).properties(height=300)
 
 
 
 
 
-        p = alt.Chart(dfsites, title="Nombre d'impressions des sites").mark_arc().encode(theta=alt.Theta(field="occurence", type="quantitative"),
+        p = alt.Chart(dfsites, title="Nombre d'occurence des sites").mark_arc().encode(theta=alt.Theta(field="occurence", type="quantitative"),
         color=alt.Color(field="site", type="nominal"),
                                                                          tooltip=["site", "occurence"])
         f1,f2=st.columns((1,2))
