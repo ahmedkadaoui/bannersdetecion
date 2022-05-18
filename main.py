@@ -82,29 +82,18 @@ def occurence_page():
     type = o2.multiselect('select banners type', options=df['type'].unique(), default=df['type'].unique())
     s1,s2 =st.columns(2)
 
-    all=True
 
     df_advertiser = df.query(
         "page==@page & type==@type  & day <= @End_day & day >= @Start_day & hour <= @End_hour & hour >= @Start_hour  "
     )
-    if all :
+    advertiser= s1.multiselect('select advertiser', options=df_advertiser['advertiser'].unique(),
+                default=df_advertiser['advertiser'].unique())
 
 
 
-        advertiser = s1.multiselect('select advertiser', options=df_advertiser['advertiser'].unique(), default=df_advertiser['advertiser'].unique())
-    else:
-        advertiser = s1.multiselect('select advertiser', options=df_advertiser['advertiser'].unique())
 
-    all = s1.checkbox("Select all")
+    Editor = s2.multiselect('select editor', options=df_advertiser['site'].unique(), default=df_advertiser['site'].unique())
 
-    allEditor=True
-    if allEditor:
-
-        Editor = s2.multiselect('select editor', options=df_advertiser['site'].unique(), default=df_advertiser['site'].unique())
-    else :
-        Editor = s2.multiselect('select editor', options=df_advertiser['site'].unique()  )
-
-    allEditor = s2.checkbox('select all')
 
     NumberOfAdvertisers = st.selectbox('select number of advertisers ', options=['5', '10', '15', '20'])
 
